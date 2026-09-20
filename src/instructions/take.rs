@@ -53,7 +53,7 @@ pub fn process_take_instruction(accounts: &mut [AccountView], _data: &[u8]) -> P
     };
 
     let escrow_address = Address::from(derive_address(
-        &[b"escrow".as_ref(), maker.address().as_ref(), &[bump]],
+        &[b"escrow".as_ref(), maker.address().as_ref()],
         Some(bump),
         &crate::ID.to_bytes(),
     ));
@@ -92,6 +92,17 @@ pub fn process_take_instruction(accounts: &mut [AccountView], _data: &[u8]) -> P
         system_program: system_program,
     }
     .invoke()?;
+
+    pinocchio_associated_token_account::instructions::CreateIdempotent {
+        funding_account: taker,
+        account: maker_ata_b,
+        wallet: maker,
+        mint: mint_b,
+        token_program: token_program,
+        system_program: system_program,
+    }
+    .invoke()?;
+
     {
         let taker_ata_b_state = pinocchio_token::state::Account::from_account_view(taker_ata_b)?;
         if taker_ata_b_state.owner() != taker.address() {

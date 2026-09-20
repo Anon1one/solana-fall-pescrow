@@ -40,7 +40,7 @@ pub fn process_cancel_instruction(accounts: &mut [AccountView], _data: &[u8]) ->
     };
 
     let escrow_address = Address::from(derive_address(
-        &[b"escrow".as_ref(), maker.address().as_ref(), &[bump]],
+        &[b"escrow".as_ref(), maker.address().as_ref()],
         Some(bump),
         &crate::ID.to_bytes(),
     ));
